@@ -1,77 +1,134 @@
-// FUNCTION FOR +
-function addNumbers(num1, num2) {
-    return num1 + num2;
+function showText() {
+    let backspaceFlag = false;
+    let showResult = false;
+    let calArr = [];
+    let opArr = [];
+    let strNumber = '';
+    let display = document.querySelector('.screen');
+    let buttons = Array.from(document.querySelectorAll('button'))
+    buttons.forEach(button => button.addEventListener('click', function() {
+        if (display.value.length === 0 && isOperator(button.value))
+            return;
+        if (display.value.length === 20 && button.value !== 'clear' && button.value !== 'delete' && button.value !== 'displayer')
+            return;
+        if (button.value === '0' && display.value[display.value.length - 1] === '/') {
+            alert('Cant Divide by 0');
+            return;
+        }
+        if (showResult) {
+            calArr = [];
+            opArr = [];
+            strNumber = '';
+            display.value = '';
+            showResult = false;
+        }
+        if ((isOperator(display.value[display.value.length - 1]) && isOperator(button.value))
+                || isDots(display.value + button.value))
+            return;
+        if (isOperator(button.value) || button.value === 'displayer') {
+            if (strNumber !== '')
+                calArr.push(strNumber);
+            strNumber = '';
+            if (button.value !== 'displayer')
+                opArr.push(button.value);
+        }
+        if (button.value !== 'clear' && button.value !== 'displayer' && button.value !== 'delete') {
+            display.value += button.value;
+            if (!(isOperator(button.value)))
+                strNumber += button.value;
+        }
+        else if (button.value === 'clear') {
+            calArr = [];
+            opArr = [];
+            strNumber = '';
+            display.value = '';
+        }
+        else if (button.value === 'displayer') {
+            if (opArr.length === 0 || calArr.length === 0)
+                return;
+            if (calArr.length === opArr.length)
+                opArr.pop();
+            let index = 0;
+            let result = 0;
+            while (opArr.length !== 0) {
+                index = isPrecedence(opArr);
+                result = operate(calArr[index], opArr[index], calArr[index + 1]);
+                calArr.splice(index, 2, result);
+                opArr.splice(index, 1);
+            }
+            display.value = calArr;
+            showResult = true;
+        }
+        else if (button.value === 'delete') {
+            if (display.value.length === 0)
+                return;
+            if (isOperator(display.value[display.value.length - 1])) {
+                backspaceFlag = false;
+                opArr.pop();
+            }
+            else if (calArr.length !== opArr.length) {
+                backspaceFlag = true;
+                calArr.pop();
+            }
+            display.value = display.value.slice(0, display.value.length - 1);
+            strNumber = getLastNumber(display.value);
+        }
+    }));
 }
 
-// FUNCTION FOR -
-function substractNumbers(num1, num2) {
-    return num1 - num2;
+function isOperator(op) {
+    if (op === '+' || op === '-' || op === '*' || op === '/')
+        return true;
+    else
+        return false;
 }
 
-// FUNCTION FOR *
-function multiplyNumbers(num1, num2) {
-    return num1 * num2;
+function isDots(str) {
+    let countDots = 0;
+    for (let i = 0; i < str.length; ++i) {
+        if (isOperator(str[i]))
+            countDots = 0;
+        else if (str[i] === '.')
+            countDots += 1;
+        if (countDots > 1)
+            return true;
+    }
+    return false;
 }
 
-// FUNCTION FOR /
-function divideNumbers(num1, num2) {
-    return num1 / num2;
+function isPrecedence(arr) {
+    for (let i = 0; i < arr.length; ++i) {
+        if (arr[i] === '*' || arr[i] === '/')
+            return i;
+    }
+    return 0;
 }
 
-// DISPLAY NUMBERS ON SCREEN & CONSOLE
-const numberbuttons = document.querySelectorAll('.small');
-const screen = document.querySelector('.screen');
-numberbuttons.forEach((button) => {
-    button.addEventListener('click', () => {
-        screen.textContent += button.textContent;
-        let digit = button.textContent;
-        console.log(digit);
-    })
-})
-
-// DISPLAY OPERATORS ON SCREEN & CONSOLE
-const operatebuttons = document.querySelectorAll('.operator');
-operatebuttons.forEach((button) => {
-    button.addEventListener('click', () => {
-        screen.textContent += button.textContent;
-        let operator = button.textContent;
-        console.log(operator);
-    })
-})
-
-// FUNCTION TO CALCULATE WHAT IS ON THE SCREEN
-function calculate() {
-    let contenido = screen.textContent;
-    let contenidoDividido = contenido.split(/(\D)/);
-    if (contenidoDividido[1] === "+") {
-        let resultado = addNumbers(parseFloat(contenidoDividido[0]), parseFloat(contenidoDividido[2])); 
-        return screen.textContent = resultado;
-    } else if (contenidoDividido[1] === "-") {
-        let resultado = substractNumbers(parseFloat(contenidoDividido[0]), parseFloat(contenidoDividido[2])); 
-        return screen.textContent = resultado;
-    } else if (contenidoDividido[1] === "x") {
-        let resultado =multiplyNumbers(parseFloat(contenidoDividido[0]), parseFloat(contenidoDividido[2])); 
-        return screen.textContent = resultado;
-    } else if (contenidoDividido[1] === "/") {
-        let resultado =divideNumbers(parseFloat(contenidoDividido[0]), parseFloat(contenidoDividido[2])); 
-        return screen.textContent = resultado;
-    } else return;
+function operate(n1, op, n2) {
+    n1 = Number(n1);
+    n2 = Number(n2);
+    if (op === '+')
+        return n1 + n2;
+    else if (op === '-')
+        return n1 - n2;
+    else if (op === '*')
+        return n1 * n2;
+    else
+        return n1 / n2;
 }
 
-// DISPLAY INTERFACE
-const displayer = document.querySelector('.displayer');
-displayer.addEventListener('click', calculate);
+function getLastNumber(str) {
+    let index = 0;
+    for (let i = str.length - 1; i >= 0; --i) {
+        if (isOperator(str[i])) {
+            index = i;
+            break;
+        }
+    }
+    if (index !== 0)
+        return str.slice(index + 1, str.length);
+    else 
+        return str;
+}
 
-
-// CLEAR INTERFACE
-const clear = document.querySelector('.clear');
-clear.addEventListener('click', () => {
-    screen.textContent = "";
-})
-
-// DELETE INTERFACE
-const del = document.querySelector('.delete');
-del.addEventListener('click', () => {
-    let contenido = screen.textContent;
-    screen.textContent = contenido.substring(0, contenido.length - 1);
-})
+showText();

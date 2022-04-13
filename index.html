@@ -10,30 +10,31 @@
 </head>
 <body>
     <div class="calculator">
-        <div class="screen"></div>
+        <input type="text" class="screen" onkeydown="return false">
         <div class="bigbuttons">
-            <button data-button="clear" class="clear">Clear</button>
-            <button data-button="delete" class="delete">Delete</button>
+            <button data-button="clear" value="clear" class="clear">Clear</button>
+            <button data-button="delete" value="delete" class="delete">Delete</button>
         </div>
         <div class="smallbuttons">
-            <button class="small">7</button>
-            <button class="small">8</button>
-            <button class="small">9</button>
-            <button class="operator">/</button>
-            <button class="small">4</button>
-            <button class="small">5</button>
-            <button class="small">6</button>
-            <button class="operator">x</button>
-            <button class="small">1</button>
-            <button class="small">2</button>
-            <button class="small">3</button>
-            <button class="operator">-</button>
-            <button class="small">.</button>
-            <button class="small">0</button>
-            <button class="displayer">=</button>
-            <button class="operator">+</button>
+            <button value="7" class="small">7</button>
+            <button value="8" class="small">8</button>
+            <button value="9" class="small">9</button>
+            <button value="/" class="operator">/</button>
+            <button value="4" class="small">4</button>
+            <button value="5" class="small">5</button>
+            <button value="6" class="small">6</button>
+            <button value="*" class="operator">x</button>
+            <button value="1" class="small">1</button>
+            <button value="2" class="small">2</button>
+            <button value="3" class="small">3</button>
+            <button value="-" class="operator">-</button>
+            <button value="." class="small">.</button>
+            <button value="0" class="small">0</button>
+            <button value="displayer" class="displayer">=</button>
+            <button value="+" class="operator">+</button>
         </div>
     </div>
-    <div class="footer">Made by Jose Ignacio Pareja | https://github.com/JoseIPareja</div>
+    <div class="footer">Made by Jose Ignacio Pareja
+        <img class="github" a=https://github.com/JoseIPareja>
 </body>
 </html>
